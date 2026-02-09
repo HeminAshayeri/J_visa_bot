@@ -89,7 +89,17 @@ async def start_bot():
     await app.bot.set_webhook(f"{url}/{TOKEN}")
 
 
+@flask_app.before_first_request
+def init_bot():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
-asyncio.get_event_loop().create_task(start_bot())
+    loop.run_until_complete(app.initialize())
+    loop.run_until_complete(app.start())
+
+    url = os.environ.get("RENDER_EXTERNAL_URL")
+    loop.run_until_complete(app.bot.set_webhook(f"{url}/{TOKEN}"))
 
 
+if __name__ == "__main__":
+    flask_app.run(host="0.0.0.0", port=10000)
