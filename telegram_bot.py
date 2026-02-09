@@ -11,6 +11,7 @@ OWNER_USER = os.environ.get("OWNER_USER")
 group_link = os.environ.get("group_link")
 
 app = ApplicationBuilder().token(TOKEN).build()
+bot = telegram.Bot(token=TOKEN)
 flask_app = Flask(__name__)
 
 
@@ -86,3 +87,4 @@ bot.set_webhook(webhook_url)
 # برای تست لوکال می‌تونی اینو اجرا کنی
 if __name__ == "__main__":
     flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
