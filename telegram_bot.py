@@ -7,7 +7,7 @@ import asyncio
 
 TOKEN = os.getenv("TG_BOT_TOKEN")
 OWNER_ID = int(os.environ["OWNER_ID"])
-OWNER_USER = int(os.environ.get("OWNER_USER"))
+OWNER_USER = os.environ.get("OWNER_USER")
 group_link = os.environ.get("group_link")
 
 app = ApplicationBuilder().token(TOKEN).build()
@@ -91,4 +91,5 @@ async def start_bot():
 
 
 asyncio.get_event_loop().create_task(start_bot())
+
 
