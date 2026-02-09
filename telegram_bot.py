@@ -66,34 +66,30 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, callback=reply_m
 
 
 
-# Flask webhook route
+# ---------- Event Loop (global) ----------
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
+
+# ---------- Flask webhook route ----------
 @flask_app.route(f"/{TOKEN}", methods=["POST"])
 def webhook():
     json_data = request.get_json(force=True)
     update = Update.de_json(json_data, app.bot)
-    asyncio.create_task(app.update_queue.put(update))  # Add update to bot queue
+
+    # send update safely to bot loop
+    loop.call_soon_threadsafe(app.update_queue.put_nowait, update)
     return "OK", 200
+
 
 @flask_app.route("/")
 def index():
     return "Bot is running!", 200
 
-# ---------------- Start everything ---------------- #
 
-async def start_bot():
-    await app.initialize()
-    await app.start()
-    # Set webhook
-    url = os.environ.get("RENDER_EXTERNAL_URL")
-    await app.bot.set_webhook(f"{url}/{TOKEN}")
-
-
+# ---------- Start everything ----------
 @flask_app.before_first_request
 def init_bot():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
     loop.run_until_complete(app.initialize())
     loop.run_until_complete(app.start())
 
