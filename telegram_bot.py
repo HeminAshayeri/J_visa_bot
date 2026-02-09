@@ -7,6 +7,8 @@ import asyncio
 
 TOKEN = os.getenv("TG_BOT_TOKEN")
 OWNER_ID = int(os.environ["OWNER_ID"])
+OWNER_USER = int(os.environ.get("OWNER_USER"))
+group_link = os.environ.get("group_link")
 
 app = ApplicationBuilder().token(TOKEN).build()
 flask_app = Flask(__name__)
@@ -31,9 +33,9 @@ async def join_req_msg(update: Update, context = ContextTypes.DEFAULT_TYPE):
     🙏🏻 سپاس از همکاری شما در حفظ کیفیت و اعتبار این جمع تخصصی
 
     لطفاً مدارک را به آیدی زیر ارسال بفرمایید:
-    @DrHemin
+    {OWNER_USER}
 
-    https://t.me/+4-las6zkqDZkNWNk """
+    {group_link} """
 
     await update.effective_user.send_message(f"{req_welcome_text}\n {req_send_proof}")
 
@@ -52,7 +54,7 @@ async def reply_message(update: Update, context=ContextTypes.DEFAULT_TYPE):
 لطفاً برای هرگونه سوال درباره ویزای آمریکا یا شرایط عضویت در گروه،
 مستقیماً با ادمین گروه تماس بگیرید:
 
-💬 @DrHemin
+💬 {OWNER_USER}
 
 از توجه و همکاری شما سپاسگزاریم!"""
 
@@ -62,15 +64,6 @@ async def reply_message(update: Update, context=ContextTypes.DEFAULT_TYPE):
 app.add_handler(handler=ChatJoinRequestHandler(callback=join_req_msg))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, callback=reply_message))
 
-# async def main():
-#     await app.initialize()
-#     await app.start()
-#     await app.updater.start_polling()
-#
-#     await asyncio.Event().wait()
-#
-# if __name__ == "__main__":
-#     asyncio.run(main())
 
 
 # Flask webhook route
@@ -98,3 +91,4 @@ async def start_bot():
 
 
 asyncio.get_event_loop().create_task(start_bot())
+
