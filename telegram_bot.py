@@ -88,7 +88,7 @@ def index():
 
 
 # ---------- Start everything ----------
-@flask_app.before_first_request
+@flask_app.before_request
 def init_bot():
     loop.run_until_complete(app.initialize())
     loop.run_until_complete(app.start())
@@ -99,4 +99,5 @@ def init_bot():
 
 if __name__ == "__main__":
     flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
 
