@@ -66,38 +66,23 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, callback=reply_m
 
 
 
-# ---------- Event Loop (global) ----------
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
+
 
 
 # ---------- Flask webhook route ----------
-@flask_app.route(f"/{TOKEN}", methods=["POST"])
+@flask_app.route("/webhook", methods = ['POST'])
 def webhook():
-    json_data = request.get_json(force=True)
-    update = Update.de_json(json_data, app.bot)
+    json_data = request.get_json(force = True)
+    update = Update.de_json(data = json_data, bot = app.bot)
+    
+    asyncio.run(main = app.update_queue.put(update))
 
-    # send update safely to bot loop
-    loop.call_soon_threadsafe(app.update_queue.put_nowait, update)
-    return "OK", 200
-
-
-@flask_app.route("/")
-def index():
-    return "Bot is running!", 200
+    return 'ok'
 
 
-# ---------- Start everything ----------
-@flask_app.before_request
-def init_bot():
-    loop.run_until_complete(app.initialize())
-    loop.run_until_complete(app.start())
+webhook_url = 'https://J_visa_bot.onrender.com/webhook'
+bot.set_webhook(webhook_url)
 
-    url = os.environ.get("RENDER_EXTERNAL_URL")
-    loop.run_until_complete(app.bot.set_webhook(f"{url}/{TOKEN}"))
-
-
+# برای تست لوکال می‌تونی اینو اجرا کنی
 if __name__ == "__main__":
-    flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
-
-
+    flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
