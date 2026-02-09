@@ -5,11 +5,8 @@ import os
 
 import asyncio
 
-
-TOKEN = '8334167570:AAHAEEZUrZtAEheT50ZdaJe1QoXw_IlLS0g'
-OWNER_ID = '336303958'
-# TOKEN = os.getenv("TG_BOT_TOKEN")
-# OWNER_ID = int(os.environ["OWNER_ID"])
+TOKEN = os.getenv("TG_BOT_TOKEN")
+OWNER_ID = int(os.environ["OWNER_ID"])
 
 app = ApplicationBuilder().token(TOKEN).build()
 flask_app = Flask(__name__)
@@ -97,6 +94,7 @@ async def start_bot():
     # Set webhook
     url = os.environ.get("RENDER_EXTERNAL_URL")
     await app.bot.set_webhook(f"{url}/{TOKEN}")
+
 
 
 asyncio.get_event_loop().create_task(start_bot())
