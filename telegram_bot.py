@@ -72,7 +72,7 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, callback=reply_m
 
 
 # ---------- Flask webhook route ----------
-@flask_app.route("/webhook", methods = ['POST'])
+@flask_app.route(f"/{TOKEN }", methods = ['POST'])
 def webhook():
     json_data = request.get_json(force = True)
     update = Update.de_json(data = json_data, bot = app.bot)
@@ -82,7 +82,7 @@ def webhook():
     return 'ok'
 
 
-webhook_url = 'https://J-visa-bot-tv1e.onrender.com/webhook'
+webhook_url = f'https://J-visa-bot-tv1e.onrender.com/{TOKEN}'
 bot.set_webhook(webhook_url)
 
 
@@ -95,6 +95,7 @@ async def start_bot():
 if __name__ == "__main__":
     asyncio.run(start_bot())
     flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
 
 
 
