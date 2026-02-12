@@ -1,3 +1,4 @@
+import telegram
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, ChatJoinRequestHandler, filters
 from flask import Flask, request
@@ -84,7 +85,15 @@ def webhook():
 webhook_url = 'https://J_visa_bot.onrender.com/webhook'
 bot.set_webhook(webhook_url)
 
+
+async def start_bot():
+    await app.initialize()
+    await app.start()
+
+
 # برای تست لوکال می‌تونی اینو اجرا کنی
 if __name__ == "__main__":
+    asyncio.run(start_bot())
     flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
 
