@@ -3,6 +3,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, ChatJoinRequestHandler, filters
 from flask import Flask, request
 import os
+import threading
 
 import asyncio
 
@@ -77,25 +78,35 @@ def webhook():
     json_data = request.get_json(force = True)
     update = Update.de_json(data = json_data, bot = app.bot)
     
-    asyncio.run(main = app.update_queue.put(update))
+    asyncio.create_task(app.update_queue.put(update))
 
     return 'ok'
 
 
 webhook_url = f'https://j-visa-bot.onrender.com/{TOKEN}'
 
-bot.set_webhook(webhook_url)
-
 
 async def start_bot():
     await app.initialize()
     await app.start()
+    await bot.set_webhook(webhook_url)
+
+    def run_flask():
+        flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
+    threading.Thread(target=run_flask).start()
+
+    while True:
+        await asyncio.sleep(3600)
 
 
 # برای تست لوکال می‌تونی اینو اجرا کنی
+# if __name__ == "__main__":
+#     asyncio.run(start_bot())
+#     flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
 if __name__ == "__main__":
     asyncio.run(start_bot())
-    flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
 
 
 
