@@ -78,7 +78,8 @@ def webhook():
     json_data = request.get_json(force = True)
     update = Update.de_json(data = json_data, bot = app.bot)
     
-    asyncio.create_task(app.update_queue.put(update))
+    # asyncio.create_task(app.update_queue.put(update))
+    asyncio.run_coroutine_threadsafe(app.update_queue.put(update), app._loop)
 
     return 'ok'
 
@@ -109,6 +110,7 @@ async def start_bot():
 
 if __name__ == "__main__":
     asyncio.run(start_bot())
+
 
 
 
