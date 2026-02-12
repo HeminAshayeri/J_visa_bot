@@ -4,6 +4,8 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Con
 from flask import Flask, request
 import os
 import threading
+from hypercorn.asyncio import serve
+from hypercorn.config import Config
 
 import asyncio
 
@@ -91,10 +93,18 @@ async def start_bot():
     await app.initialize()
     await app.start()
     await bot.set_webhook(webhook_url)
+    
+    config = Config()
+    config.bind = [f"0.0.0.0:{os.environ.get('PORT', 5000)}"]
+    await serve(flask_app, config)
+
+if __name__ == "__main__":
+    asyncio.run(start_bot())
 
 
 if __name__ == "__main__":
     asyncio.run(start_bot())
+
 
 
 
