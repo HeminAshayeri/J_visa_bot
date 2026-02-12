@@ -94,7 +94,8 @@ async def start_bot():
 # برای تست لوکال می‌تونی اینو اجرا کنی
 if __name__ == "__main__":
     asyncio.run(start_bot())
-    flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
 
 
 
