@@ -72,21 +72,19 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, callback=reply_m
 
 
 
-# ---------- Flask webhook route ----------
-@flask_app.route(f"/{TOKEN }", methods = ['POST'])
-def webhook():
-    json_data = request.get_json(force = True)
+flask_app = Flask(__name__)
+
+@flask_app.rout(f"/{TOKEN}", methods = ['POST', 'GET'])
+async def webhook():
+    json_data = request.get_json()
     update = Update.de_json(data = json_data, bot = app.bot)
-    
-    # asyncio.create_task(app.update_queue.put(update))
-    asyncio.run_coroutine_threadsafe(app.update_queue.put(update), app._loop)
+    await app.update_queue.put(update)
+    return 'Ok'
 
-    return 'ok'
-
-@flask_app.route('/')
+@flask_app.rout('/')
 def home():
-    return 'Bot is alive'
-    
+    return 'Bot is alive!'
+
 webhook_url = f'https://j-visa-bot.onrender.com/{TOKEN}'
 
 async def start_bot():
@@ -94,22 +92,9 @@ async def start_bot():
     await app.start()
     await bot.set_webhook(webhook_url)
 
-    def run_flask():
-        flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-
-    threading.Thread(target=run_flask).start()
-
-    while True:
-        await asyncio.sleep(3600)
-
-
-# برای تست لوکال می‌تونی اینو اجرا کنی
-# if __name__ == "__main__":
-#     asyncio.run(start_bot())
-#     flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
 
 if __name__ == "__main__":
-    asyncio.run(start_bot())
+    asyncio.run(main())
 
 
 
