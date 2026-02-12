@@ -82,9 +82,11 @@ def webhook():
 
     return 'ok'
 
-
+@flask_app.route('/')
+def home():
+    return 'Bot is alive'
+    
 webhook_url = f'https://j-visa-bot.onrender.com/{TOKEN}'
-
 
 async def start_bot():
     await app.initialize()
@@ -107,6 +109,7 @@ async def start_bot():
 
 if __name__ == "__main__":
     asyncio.run(start_bot())
+
 
 
 
