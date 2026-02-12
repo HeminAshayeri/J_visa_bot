@@ -82,7 +82,8 @@ def webhook():
     return 'ok'
 
 
-webhook_url = f'https://J-visa-bot-tv1e.onrender.com/{TOKEN}'
+webhook_url = f'https://j-visa-bot.onrender.com/{TOKEN}'
+
 bot.set_webhook(webhook_url)
 
 
@@ -95,6 +96,7 @@ async def start_bot():
 if __name__ == "__main__":
     asyncio.run(start_bot())
     flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
 
 
 
